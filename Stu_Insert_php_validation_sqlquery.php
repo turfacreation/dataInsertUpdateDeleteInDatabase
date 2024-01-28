@@ -9,35 +9,35 @@ function clean($data)
 }
 
 // validation and sql query start form here
-    if (isset($_POST['addStudent'])) {
-        $name = clean($_POST['name'] ?? null);
-        $email = clean($_POST['email'] ?? null);
-        $conemail = clean($_POST['conemail'] ?? null);
-        $password = clean($_POST['password'] ?? null);
-        $dob = clean($_POST['date'] ?? null);
-        $gender = clean($_POST['gender'] ?? null);
-        $hobby = $_POST['hobby'] ?? []; // checkbox item always array thats why it will be convert arry to string
-        $hobbyStr = implode(", ", $hobby); // for convert array to string use imploade() function
-        $class = clean($_POST['class'] ?? null);
-        //the below code is for image upload
-        $imgName = $_FILES['img']['name'];
-        $imgTmpName = $_FILES['img']['tmp_name'];
-        $imgType = $_FILES['img']['type'];
-        $imgError = $_FILES['img']['error'];
-        $imgSize = $_FILES['img']['size'];
-    
-    // this is for mysql validating for anti hackers
-        $name = $conn->real_escape_string($name);
-        $email = $conn->real_escape_string($email);
-        $conemail = $conn->real_escape_string($conemail);
-        $password = $conn->real_escape_string($password);
-        $dob = $conn->real_escape_string($dob);
-        $gender = $conn->real_escape_string($gender);
-        //$hobby = $conn->real_escape_string($hobby);
-        $class = $conn->real_escape_string($class);
-        $imgName = $conn->real_escape_string($imgName);
+if (isset($_POST['addStudent'])) {
+    $name = clean($_POST['name'] ?? null);
+    $email = clean($_POST['email'] ?? null);
+    $conemail = clean($_POST['conemail'] ?? null);
+    $password = clean($_POST['password'] ?? null);
+    $dob = clean($_POST['date'] ?? null);
+    $gender = clean($_POST['gender'] ?? null);
+    $hobby = $_POST['hobby'] ?? []; // checkbox item always array thats why it will be convert arry to string
+    $hobbyStr = implode(", ", $hobby); // for convert array to string use imploade() function
+    $class = clean($_POST['class'] ?? null);
+    //the below code is for image upload
+    $imgName = $_FILES['img']['name'];
+    $imgTmpName = $_FILES['img']['tmp_name'];
+    $imgType = $_FILES['img']['type'];
+    $imgError = $_FILES['img']['error'];
+    $imgSize = $_FILES['img']['size'];
 
-    
+    // this is for mysql validating for anti hackers
+    $name = $conn->real_escape_string($name);
+    $email = $conn->real_escape_string($email);
+    $conemail = $conn->real_escape_string($conemail);
+    $password = $conn->real_escape_string($password);
+    $dob = $conn->real_escape_string($dob);
+    $gender = $conn->real_escape_string($gender);
+    //$hobby = $conn->real_escape_string($hobby);
+    $class = $conn->real_escape_string($class);
+    $imgName = $conn->real_escape_string($imgName);
+
+
     //this is for name validation
     if (empty($name)) {
         $errName = "Name is Required";
@@ -72,7 +72,7 @@ function clean($data)
     } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{5,}$/", $password)) {
         $errPassword = "Password must be 5 Characters long & Contain at least </br> one UPPERCASE letter </br> one lowercase letter </br>one digit and </br>one Special Character";
     } else {
-        $errPassword = $password;
+        $crrPassword;
     }
 
     //this is for date validation
@@ -87,6 +87,8 @@ function clean($data)
     //this is for gender validation
     if (empty($gender)) {
         $errGender = "Please Select Your Gender.";
+    } else {
+        $crrGender = $gender;
     }
 
     //validation for checkbox field name as hobby
@@ -109,14 +111,17 @@ function clean($data)
     $imgExt = explode('.', $imgName);
     $imgActualExt = strtolower(end($imgExt));
     $allowed = ['jpg', 'jpeg', 'png'];
+
+
+
     if (in_array($imgActualExt, $allowed)) {
         if ($imgError === 0) {
             if ($imgSize < 1000000) {
-                $imgNewName = uniqid('', true) . "." . $imgActualExt;
+                $imgName = uniqid('', true) . "." . $imgActualExt;
                 if (!is_dir('uploads')) {
                     mkdir('uploads');
                 }
-                $imgDestination = 'uploads/' . $imgNewName;
+                $imgDestination = 'uploads/' . $imgName;
                 $imgUpload = move_uploaded_file($imgTmpName, $imgDestination);
                 if ($imgUpload) {
                     echo "Image Upload Successfully<br>";
@@ -130,56 +135,48 @@ function clean($data)
             echo "Error uploading image<br>";
         }
     } else {
-        echo "Invalid file type<br>";
+        echo "Image Not Found  or Invalid File Type<br>";
     }
 
-    //this is SQL query
-    $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
-    VALUES ('$name', '$email', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
-
-    // the query will run by below line
-    $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
-    if ($result) {
-        echo "Students Added Successfully<br>";
-        echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
-    } else {
-        echo "Students Not Added";
-    }
-// duplicate the data check
-$dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email'");
-if($dupDataCheckQuery -> num_rows > 0) {
-    echo "Email Already Exist";
-    echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
-    exit();
-}
-}
 
 
-// image uploading not working for some issue
 
-/*
-    if (empty($imgName)) {
-        $errImg = "<span class='color:red; font-weight:bold; font-size:22px;'>File is not found</span>";
-    } elseif (!in_array($imgActualExt, $allowed)) {
-        $errImg = "<span class='color:red; font-weight:bold; font-size:22px;'>Only jeg, jpeg and png extension are allowed</span>";
-    }
-    if ($imgError === 0) {
-        if ($imgSize < 100000) {
+    if (
+        isset($crrName) && isset($crrEmail) && isset($crrConEmail) && isset($crrPassword)
+        && isset($crrDate) && isset($crrGender) && isset($crrHobby) && isset($crrClass)
+        && isset($imgName)
+    ) {
 
-            if (!is_dir('uploads')) {
-                mkdir('uploads');
+        $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
+        VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
 
-                //create new img name
-                $imgNewName = str_shuffle(date('HisAFdYDyl')) . uniqid('', true) . '.' . $imgActualExt;
-                //move img to new location
-                $imgUpload = move_uploaded_file($imgTmpName, 'uploads/' . $imgNewName);
-                if ($imgUpload) {
-                    echo "<span class='color:green; font-weight:bold; font-size:22px;'>Image Upload Successfully</span>";
-                } else {
-                    echo "<span class='color:red; font-weight:bold; font-size:22px;'>File size too much high</span>";
-                }
-            }
+        $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
+
+        if ($result) {
+            echo "Students Added Successfully<br>";
+            echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
+        } else {
+            echo "Students Not Added, Please fill up all the fields";
         }
     }
-    
-*/
+    /*
+    $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
+    VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
+    $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
+
+    if ($result) {
+        echo "Students Added Successfully<br>";
+        echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
+    } else {
+        echo "Students Not Added, Please fill up all the fields";
+    }*/
+
+
+    // duplicate the data check
+    /* $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail` = '$conemail'");
+    if ($dupDataCheckQuery->num_rows > 0) {
+        echo "Email Already Exist";
+        echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
+        exit();
+    }*/
+}

@@ -12,7 +12,7 @@ if (isset($_POST['deleteStudent'])) {
         $delImg = unlink("./uploads/" . $obj->simg); // this function use for delete img from server or db or folder
         if ($delImg) {
             echo "Student Delete Successfully";
-            echo "<script> setTimeout(()=> location.href='./', 5000) </script>";
+            echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
         } else {
             echo "Students Not Deleted";
         }

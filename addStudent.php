@@ -8,8 +8,8 @@
 
 
                 <!--Your name tag start here  -->
-                <div class="mb-3 form-floating shadow-sm">
-                    <input type="text" name="name" value="<?= $name ?? null; ?>" id="" placeholder="Your Name" class="form-control <?= isset($errName) ? 'is-invalid' : null; ?><?= isset($crrName) ? 'is-valid' : null; ?> ">
+                <div class="mb-3 form-floating ">
+                    <input type="text" name="name" id="" placeholder="Your Name" class="form-control <?= isset($errName) ? 'is-invalid' : null; ?><?= isset($crrName) ? 'is-valid' : null; ?> ">
                     <label for="" class="label">Your Name:</label>
                     <div class="invalid-feedback">
                         <?= $errName ?? null; ?>
@@ -19,7 +19,7 @@
                 <!-- Your name tag finished here  -->
 
                 <!-- email and confirm email  -->
-                <div class="mb-3 form-floating shadow-sm">
+                <div class="mb-3 form-floating ">
                     <input type="text" name="email" id="" placeholder=" Your Email" class="form-control <?= isset($errEmail) ? 'is-invalid' : (isset($crrEmail) ? 'is-valid' : null); ?>">
                     <label for="" class="label"> Your Email:</label>
                     <div class="invalid-feedback">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3 form-floating shadow-sm">
+                <div class="mb-3 form-floating ">
                     <input type="text" name="conemail" id="" placeholder="Confirm Email" class="form-control <?= isset($errConEmail) ? 'is-invalid' : (isset($crrConEmail) ? 'is-valid' : null); ?>">
                     <label for="" class="label">Confirm Email:</label>
                     <div class="invalid-feedback">
@@ -37,19 +37,32 @@
                 <!-- email and confirm email  -->
 
                 <!-- create password  -->
-                <div class="form-floating mb-3 shadow-sm ">
-                    <input type="password" name="password" id="" placeholder="" class="form-control <?= isset($errPassword) ? "is-invalid" : (isset($crrPassword) ? 'is-valid' : null) ?>">
+
+                <div class="form-floating mb-3 ">
+                    <input type="password" name="password" id="pass" class="form-control <?= isset($errPassword) ? "is-invalid" : (isset($crrPassword) ? 'is-valid' : null) ?>">
+                    <input type="checkbox" class="form-check form-check-inline" name="" id="showPass">
                     <label for="">Password</label>
                     <div class="invalid-feedback">
                         <?= $errPassword ?>
                     </div>
-
                 </div>
+
+                <script>
+                    const showPass = document.getElementById('showPass');
+                    const pass = document.getElementById('pass');
+                    showPass.addEventListener('click', () => {
+                        if (showPass.checked) {
+                            pass.setAttribute('type', 'text');
+                        } else {
+                            pass.setAttribute('type', 'password');
+                        }
+                    })
+                </script>
                 <!-- create password  -->
 
 
                 <!-- date start tag  -->
-                <div class="mb-3 form-floating shadow-sm">
+                <div class="mb-3 form-floating ">
                     <input type="date" name="date" id="fordate" class="form-control <?= isset($errDate) ? 'is-invalid' : (isset($crrDate) ? 'is-valid' : null); ?> ">
                     <label for="fordate" class="form-label">Date of Birth</label>
                     <div class="invalid-feedback">
@@ -60,7 +73,7 @@
 
 
                 <!-- select gender with radio button  -->
-                <div class="mb-3 border rounded shadow-sm py-3">
+                <div class="mb-3 border rounded  py-3">
                     <div class="form-check form-check-inline">
                         <label for="" class="form-check-label">Select Gender:</label>
                     </div>
@@ -85,7 +98,7 @@
 
 
                 <!-- select hobby with checkbox  -->
-                <div class="mb-3 border rounded shadow-sm py-3">
+                <div class="mb-3 border rounded  py-3">
                     <div class="form-check form-check-inline">
                         <label for="" class="form-check-label">Select Hobby:</label>
                     </div>
@@ -118,7 +131,7 @@
                 <!-- select hobby with checkbox  -->
 
                 <!-- select class with drop down menu  -->
-                <div class="mb-3 form-floating shadow-sm ">
+                <div class="mb-3 form-floating  ">
                     <select name="class" id="chooseClass" class="form-select">
                         <option value="">-- Choose Your Class</option>
                         <option value="Six" <?= isset($crrClass) && $crrClass == 'Six' ? 'selected' : null; ?>>Six
@@ -163,8 +176,6 @@
                             });
                         </script>
                     </div>
-
-
                 </div>
 
                 <!-- image upload tag end  here -->

@@ -20,7 +20,7 @@ if (isset($_POST['updateStudent'])) {
     $hobby = $_POST['hobby'] ?? []; // checkbox item always array thats why it will be convert arry to string
     $hobbyStr = implode(", ", $hobby); // for convert array to string use imploade() function
     $class = clean($_POST['class'] ?? null);
-    //the below code is for image upload
+    //the below code is for image update
     $imgName = $_FILES['img']['name'];
     $imgTmpName = $_FILES['img']['tmp_name'];
     $imgType = $_FILES['img']['type'];
@@ -32,30 +32,6 @@ if (isset($_POST['updateStudent'])) {
     $imgActualExt = strtolower(end($imgExt));
     $allowed = ['jpg', 'jpeg', 'png'];
 
-if (in_array($imgActualExt, $allowed)) {
-    if ($imgError === 0) {
-        if ($imgSize < 1000000) {
-            $imgNewName = uniqid('', true) . "." . $imgActualExt;
-            if (!is_dir('uploads')) {
-                mkdir('uploads');
-            }
-            $imgDestination = 'uploads/' . $imgNewName;
-            $imgUpload = move_uploaded_file($imgTmpName, $imgDestination);
-            if ($imgUpload) {
-                echo "Image Upload Successfully<br>";
-            } else {
-                echo "Failed to upload image<br>";
-            }
-        } else {
-            echo "File size exceeds the maximum limit<br>";
-        }
-    } else {
-        echo "Error uploading image<br>";
-    }
-} else {
-    echo "Invalid file type<br>";
-}
-    
     // this is for mysql validating for anti hackers
     $name = $conn->real_escape_string($name);
     $email = $conn->real_escape_string($email);
@@ -68,7 +44,7 @@ if (in_array($imgActualExt, $allowed)) {
     $imgName = $conn->real_escape_string($imgName);
 
 
-    
+
     //this is for name validation
     if (empty($name)) {
         $errName = "Name is Required";
@@ -144,62 +120,55 @@ if (in_array($imgActualExt, $allowed)) {
     $result->num_rows == 0 ? header("location:./") : null; //if entered wrong id or facke or == 0,  then the function can not do this and she redirect to main location
     $row = $result->fetch_object();
     //this is for students update SQL query
-    $sql = "UPDATE `stuinfo` SET `sname`='$name', `email`='$email', `pass`='$password', `dob`='$dob', `gender`='$gender', `hobby`='$hobbyStr', `sclass`='$class', `simg`='$imgName' WHERE `id` = '$id' ";
+    $sql = "UPDATE `stuinfo` SET `sname`='$name', `email`='$email', `conemail`='$conemail', `pass`='$password', `dob`='$dob', `gender`='$gender', `hobby`='$hobbyStr', `sclass`='$class', `simg`='$imgName' WHERE `id` = '$id' ";
 
     // the query will run by below line
     $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
     if ($result) {
         echo "Student Update Successfully<br>";
-        echo "<script> setTimeout(()=> location.href='./', 5000) </script>";
+        echo "<script> setTimeout(()=> location.href='./', 2000) </script>";
     } else {
         echo "Students Not Update<br>";
     }
 
-    // duplicate the data check
-    $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email'");
-    if($dupDataCheckQuery -> num_rows > 0) {
-        echo "Email Already Exist";
-        echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
-        exit();
-    }
-}
-?>
-<?php /*
-// Image upload conditions
-if (empty($imgName)) {
-    $errImg = "<span class='color:red; font-weight:bold; font-size:22px;'>File is not found</span>";
-} elseif (!in_array($imgActualExt, $allowed)) {
-    $errImg = "<span class='color:red; font-weight:bold; font-size:22px;'>Only jpg, jpeg, and png extensions are allowed</span>";
-}
 
-if ($imgError === 0) {
-    if ($imgSize < 10000000) {
-        if (!is_dir('uploads')) {
-            mkdir('uploads');
-        }
-
-        // Validate file type using a more secure method (e.g., MIME type)
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $fileMimeType = mime_content_type($imgTmpName);
-
-        if (in_array($fileMimeType, $allowedMimeTypes)) {
-            // Create a new image name
-            $imgNewName = str_shuffle(date('HisAFdYDyl')) . uniqid('', true) . '.' . $imgActualExt;
-
-            // Move image to the new location
-            $imgUpload = move_uploaded_file($imgTmpName, 'uploads/' . $imgNewName);
-
-            if ($imgUpload) {
-                echo "<span class='color:green; font-weight:bold; font-size:22px;'>Image Upload Successfully<br></span>";
+    if (in_array($imgActualExt, $allowed)) {
+        if ($imgError === 0) {
+            if ($imgSize < 1000000) {
+                $imgName = uniqid('', true) . "." . $imgActualExt;
+                $imgDestination = 'uploads/' . $imgName;
+                $imgUpload = move_uploaded_file($imgTmpName, $imgDestination);
+                if ($imgUpload) {
+                    $sql = "UPDATE `stuinfo` SET `simg` = '$imgName' WHERE `id` = '$id'";
+                    $result = $conn->query($sql);
+                    if ($result) {
+                        $delFile = unlink("./uploads/" . $row->simg);
+                        if ($delFile) {
+                            echo "Student Image Update Successfully";
+                            echo "<script>setTimeOut(()=> location.herf='./', 2000)</script>";
+                        } else {
+                            echo "Student Image Not Update";
+                        }
+                    } else {
+                        echo "File not Uploaded<br>";
+                    }
+                } else {
+                    echo "Failed to upload image<br>";
+                }
             } else {
-                echo "<span class='color:red; font-weight:bold; font-size:22px;'>Failed to upload image<br></span>";
+                echo "File size exceeds the maximum limit<br>";
             }
         } else {
-            echo "<span class='color:red; font-weight:bold; font-size:22px;'>Invalid file type<br></span>";
+            echo "Error uploading image<br>";
         }
     } else {
-        echo "<span class='color:red; font-weight:bold; font-size:22px;'>File size exceeds the maximum limit<br></span>";
+        echo "Invalid file type<br>";
     }
+    // duplicate the data check
+    // $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail`='$conemail'");
+    // if ($dupDataCheckQuery->num_rows > 0) {
+    //  echo "Email Already Exist";
+    // echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
+    // exit();
+    // }
 }
-*/
-?>

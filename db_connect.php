@@ -19,12 +19,13 @@ $stuinfo = "CREATE TABLE IF NOT EXISTS stuinfo
 (id int (11) NOT NULL auto_increment,
 sname varchar(50) NOT NULL,
 email varchar(30) NOT NULL,
+conemail varchar(30) NOT NULL,
 pass varchar(50) NOT NULL,
 dob varchar(30) NOT NULL,
 gender varchar(20) NOT NULL,
 hobby varchar(20) NOT NULL,
 sclass varchar(11) NOT NULL,
-simg varchar(100) NOT NULL,
+simg varchar(255) NOT NULL,
 created_at TIMESTAMP  ,
 PRIMARY KEY (id) )";
 
