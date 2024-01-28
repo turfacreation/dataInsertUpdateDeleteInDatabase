@@ -105,15 +105,10 @@ if (isset($_POST['addStudent'])) {
     } else {
         $crrClass = $class;
     }
-
-
     // Validation for image upload
     $imgExt = explode('.', $imgName);
     $imgActualExt = strtolower(end($imgExt));
     $allowed = ['jpg', 'jpeg', 'png'];
-
-
-
     if (in_array($imgActualExt, $allowed)) {
         if ($imgError === 0) {
             if ($imgSize < 1000000) {
@@ -138,20 +133,14 @@ if (isset($_POST['addStudent'])) {
         echo "Image Not Found  or Invalid File Type<br>";
     }
 
-
-
-
     if (
         isset($crrName) && isset($crrEmail) && isset($crrConEmail) && isset($crrPassword)
         && isset($crrDate) && isset($crrGender) && isset($crrHobby) && isset($crrClass)
         && isset($imgName)
     ) {
-
         $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
         VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
-
         $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
-
         if ($result) {
             echo "Students Added Successfully<br>";
             echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
@@ -169,8 +158,7 @@ if (isset($_POST['addStudent'])) {
         echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
     } else {
         echo "Students Not Added, Please fill up all the fields";
-    }s
-
+    }
 
     // duplicate the data check
     /* $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail` = '$conemail'");
@@ -178,5 +166,10 @@ if (isset($_POST['addStudent'])) {
         echo "Email Already Exist";
         echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
         exit();
+
+
+
+
+        
     }*/
 }
