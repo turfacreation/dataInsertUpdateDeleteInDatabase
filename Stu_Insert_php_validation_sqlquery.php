@@ -159,7 +159,7 @@ if (isset($_POST['addStudent'])) {
             echo "Students Not Added, Please fill up all the fields";
         }
     }
-    /*
+   
     $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
     VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
     $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
@@ -169,7 +169,7 @@ if (isset($_POST['addStudent'])) {
         echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
     } else {
         echo "Students Not Added, Please fill up all the fields";
-    }*/
+    }
 
 
     // duplicate the data check
