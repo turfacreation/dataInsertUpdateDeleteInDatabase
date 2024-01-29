@@ -39,7 +39,7 @@ if (isset($_POST['updateStudent'])) {
     $password = $conn->real_escape_string($password);
     $dob = $conn->real_escape_string($dob);
     $gender = $conn->real_escape_string($gender);
-    //$hobby = $conn->real_escape_string($hobby);
+    $hobbyStr = $conn->real_escape_string($hobbyStr);
     $class = $conn->real_escape_string($class);
     $imgName = $conn->real_escape_string($imgName);
 
@@ -79,7 +79,7 @@ if (isset($_POST['updateStudent'])) {
     } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{5,}$/", $password)) {
         $errPassword = "Password must be 5 Characters long & Contain at least </br> one UPPERCASE letter </br> one lowercase letter </br>one digit and </br>one Special Character";
     } else {
-        $errPassword = $password;
+        $crrPassword = $password;
     }
 
     //this is for date validation
@@ -94,6 +94,8 @@ if (isset($_POST['updateStudent'])) {
     //this is for gender validation
     if (empty($gender)) {
         $errGender = "Please Select Your Gender.";
+    } else {
+        $crrGender = $gender;
     }
 
     //validation for checkbox field name as hobby
@@ -120,18 +122,26 @@ if (isset($_POST['updateStudent'])) {
     $result->num_rows == 0 ? header("location:./") : null; //if entered wrong id or facke or == 0,  then the function can not do this and she redirect to main location
     $row = $result->fetch_object();
     //this is for students update SQL query
-    $sql = "UPDATE `stuinfo` SET `sname`='$name', `email`='$email', `conemail`='$conemail', `pass`='$password', `dob`='$dob', `gender`='$gender', `hobby`='$hobbyStr', `sclass`='$class', `simg`='$imgName' WHERE `id` = '$id' ";
 
-    // the query will run by below line
-    $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
-    if ($result) {
-        echo "Student Update Successfully<br>";
-        echo "<script> setTimeout(()=> location.href='./', 2000) </script>";
-    } else {
-        echo "Students Not Update<br>";
+    if (
+        isset($crrName) && isset($crrEmail) && isset($crrConEmail) && isset($crrPassword)
+        && isset($crrDate) && isset($crrGender) && isset($crrHobby) && isset($crrClass)
+        && isset($imgName)
+    ) {
+
+        $sql = "UPDATE `stuinfo` SET `sname`='$name', `email`='$email', `conemail`='$conemail', `pass`='$password', `dob`='$dob', `gender`='$gender', `hobby`='$hobbyStr', `sclass`='$class', `simg`='$imgName' WHERE `id` = '$id' ";
+
+        // the query will run by below line
+        $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
+        if ($result) {
+            echo "<div class='container text-success text-center fs-5'>Student Update Successfully</div>";
+            echo "<script> setTimeout(()=> location.href='./', 50000) </script>";
+        } else {
+            echo "<div class='container text-danger text-center fs-5'>Students Not Update</div>";
+        }
     }
 
-
+    //this is  image upload code
     if (in_array($imgActualExt, $allowed)) {
         if ($imgError === 0) {
             if ($imgSize < 1000000) {
@@ -164,11 +174,4 @@ if (isset($_POST['updateStudent'])) {
     } else {
         echo "Invalid file type<br>";
     }
-    // duplicate the data check
-    // $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail`='$conemail'");
-    // if ($dupDataCheckQuery->num_rows > 0) {
-    //  echo "Email Already Exist";
-    // echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
-    // exit();
-    // }
 }

@@ -20,7 +20,7 @@ if (isset($_POST['deleteStudent'])) {
 }
 ?>
 
-<div class="container-fluid">
+<div class="container-fluid text-center">
     <h2 class="text-center text-danger bg-dark py-3">Delete Student</h2>
     <form action="" method="post">
         <h3>Are you sure you want to delete this student?</h3>

@@ -33,7 +33,7 @@ if (isset($_POST['addStudent'])) {
     $password = $conn->real_escape_string($password);
     $dob = $conn->real_escape_string($dob);
     $gender = $conn->real_escape_string($gender);
-    //$hobby = $conn->real_escape_string($hobby);
+    $hobbyStr = $conn->real_escape_string($hobbyStr);
     $class = $conn->real_escape_string($class);
     $imgName = $conn->real_escape_string($imgName);
 
@@ -72,7 +72,7 @@ if (isset($_POST['addStudent'])) {
     } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{5,}$/", $password)) {
         $errPassword = "Password must be 5 Characters long & Contain at least </br> one UPPERCASE letter </br> one lowercase letter </br>one digit and </br>one Special Character";
     } else {
-        $crrPassword;
+        $crrPassword = $password;
     }
 
     //this is for date validation
@@ -112,64 +112,50 @@ if (isset($_POST['addStudent'])) {
     if (in_array($imgActualExt, $allowed)) {
         if ($imgError === 0) {
             if ($imgSize < 1000000) {
-                $imgName = uniqid('', true) . "." . $imgActualExt;
+                $imgNewName = uniqid('', true) . "." . $imgActualExt;
                 if (!is_dir('uploads')) {
                     mkdir('uploads');
                 }
-                $imgDestination = 'uploads/' . $imgName;
+                $imgDestination = 'uploads/' . $imgNewName;
                 $imgUpload = move_uploaded_file($imgTmpName, $imgDestination);
                 if ($imgUpload) {
-                    echo "Image Upload Successfully<br>";
+                    echo "<div class='container text-success text-center fs-5'>Image Upload Successfully</div>";
                 } else {
-                    echo "Failed to upload image<br>";
+                    echo "<div class='container text-success text-center fs-5'>Failed to upload image</div>";
                 }
             } else {
-                echo "File size exceeds the maximum limit<br>";
+                echo "<div class='container text-success text-center fs-5'>File size exceeds the maximum limit</div>";
             }
         } else {
-            echo "Error uploading image<br>";
+            echo "<div class='container text-success text-center fs-5'>Error uploading image</div>";
         }
     } else {
-        echo "Image Not Found  or Invalid File Type<br>";
+        echo "<div class='container text-success text-center fs-5'>Image Not Found  or Invalid File Type</div>";
     }
 
-    if (
+
+    $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail` = '$conemail'");
+    if ($dupDataCheckQuery->num_rows > 0) {
+        echo "<div class='container text-danger text-center fs-5'>Email Already Exist, Please! Try Again.</div>";
+        echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
+    } elseif (
         isset($crrName) && isset($crrEmail) && isset($crrConEmail) && isset($crrPassword)
         && isset($crrDate) && isset($crrGender) && isset($crrHobby) && isset($crrClass)
-        && isset($imgName)
+        && isset($imgName) && isset($imgNewName)
     ) {
-        $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
-        VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
-        $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
+        $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`, `simg`) 
+                    VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgNewName')";
+
+        $result = $conn->query($sql);
+
         if ($result) {
-            echo "Students Added Successfully<br>";
-            echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
+            echo "<div class='container text-success text-center fs-5'>Students Added Successfully<div> <br>";
+            echo "<script> setTimeout(()=> location.href='./', 3000) </script>";
         } else {
-            echo "Students Not Added, Please fill up all the fields";
+            echo "Error: " . $sql . "<br>" . $conn->error;
+            // Check for any SQL errors
         }
-    }
-
-    $sql = "INSERT INTO `stuinfo`(`sname`, `email`, `conemail`, `pass`, `dob`, `gender`, `hobby`, `sclass`,`simg`) 
-    VALUES ('$name', '$email', '$conemail', '$password', '$dob', '$gender', '$hobbyStr', '$class', '$imgName')";
-    $result = $conn->query($sql); // or $result = mysqli_query($conn, $sql);
-
-    if ($result) {
-        echo "Students Added Successfully<br>";
-        echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
     } else {
-        echo "Students Not Added, Please fill up all the fields";
+        echo "<div class='container text-danger text-center fs-5'>Students Not Added, Please fill up all the fields<div>";
     }
-
-    // duplicate the data check
-    /* $dupDataCheckQuery = $conn->query("SELECT * FROM `stuinfo` WHERE `email` = '$email' && `conemail` = '$conemail'");
-    if ($dupDataCheckQuery->num_rows > 0) {
-        echo "Email Already Exist";
-        echo "<script> setTimeout(()=> location.href='./', 1000) </script>";
-        exit();
-
-
-
-
-        
-    }*/
 }

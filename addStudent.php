@@ -46,7 +46,7 @@
                         <?= $errPassword ?>
                     </div>
                 </div>
-
+                <!-- This script for showing password  -->
                 <script>
                     const showPass = document.getElementById('showPass');
                     const pass = document.getElementById('pass');
